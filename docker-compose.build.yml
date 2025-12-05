@@ -4,6 +4,7 @@ services:
   cstrike-server:
     build: .
     container_name: cstrike-server
+    platform: linux/amd64
     restart: unless-stopped
     ports:
       - "27015:27015/udp"

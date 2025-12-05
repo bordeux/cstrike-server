@@ -3,6 +3,7 @@ version: '3.8'
 services:
   cstrike-server:
     image: ghcr.io/bordeux/cstrike-server:latest
+    platform: linux/amd64
     container_name: cstrike-server
     restart: unless-stopped
     ports:
