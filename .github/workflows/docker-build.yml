@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - '**'
+  schedule:
+    - cron: '0 0 * * 0'  # Weekly on Sunday at 00:00 UTC
 
 env:
   REGISTRY: ghcr.io
@@ -36,8 +38,8 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
-            type=ref,event=branch,enable=${{ github.ref != 'refs/heads/main' }},suffix=,value={{branch}}
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' || github.event_name == 'schedule' }}
+            type=ref,event=branch,enable=${{ github.ref != 'refs/heads/main' && github.event_name != 'schedule' }},suffix=,value={{branch}}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5

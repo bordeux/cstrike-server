@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  cstrike-server:
+    build: .
+    container_name: cstrike-server
+    restart: unless-stopped
+    ports:
+      - "27015:27015/udp"
+      - "27015:27015/tcp"
+    volumes:
+      - ./cstrike:/opt/steam/hlds/cstrike
+    environment:
+      - SERVER_PORT=27015
+      - SERVER_MAP=de_dust2
+      - SERVER_LAN=0
+      - SERVER_MAX_PLAYERS=20
+      - SERVER_GAME=cstrike
+      - SERVER_PASSWORD=change-me
+    stdin_open: true
+    tty: true
