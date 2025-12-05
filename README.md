@@ -37,6 +37,10 @@ If you want to enabled those modules check **cstrike/addons/metamod/plugins.ini*
 ### Using Pre-built Image
 
 ```bash
+# Create the data directory with proper permissions
+mkdir -p cstrike && chmod 777 cstrike
+
+# Start the server
 docker-compose up -d
 ```
 
@@ -45,6 +49,10 @@ This will pull the latest image from GitHub Container Registry and start the ser
 ### Building Locally
 
 ```bash
+# Create the data directory with proper permissions
+mkdir -p cstrike && chmod 777 cstrike
+
+# Build and start the server
 docker-compose -f docker-compose.build.yml up -d --build
 ```
 
