@@ -8,7 +8,7 @@ ENV SERVER_GAME=cstrike
 ENV SERVER_PASSWORD="change-me"
 ENV STEAM_PATH="/opt/steam"
 ENV HLDS_PATH="${STEAM_PATH}/hlds"
-ENV BASE_PACK="https://github.com/PluginyCS/BasePack/releases/download/2.1.0/BasePack.zip"
+ENV BASE_PACK="https://github.com/bordeux/amxx-base-pack/archive/refs/heads/master.zip"
 ENV GEOLITE_URL="https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-Country.mmdb"
 ENV STEAMCMD_URL="media.steampowered.com/client/installer/steamcmd_linux.tar.gz"
 
@@ -44,7 +44,7 @@ RUN mkdir -p $HOME/.steam \
     && echo 70 > ${HLDS_PATH}/steam_appid.txt
 
 
-RUN curl -L ${BASE_PACK} | bsdtar -xf - -C ${HLDS_PATH} && \
+RUN curl -L ${BASE_PACK} | bsdtar -xf - --strip-components=1 -C ${HLDS_PATH} && \
     chmod +x ${HLDS_PATH}/hlds_* && \
     curl -L -o ${HLDS_PATH}/cstrike/addons/amxmodx/data/GeoLite2-Country.mmdb ${GEOLITE_URL}
 
