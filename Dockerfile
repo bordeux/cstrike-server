@@ -35,21 +35,20 @@ WORKDIR ${STEAM_PATH}
 COPY ./hlds.txt ${STEAM_PATH}
 
 # Downloads and extracts the SteamCMD installer.
-RUN curl -sL ${STEAMCMD_URL} | tar xzvf - && \
-    file ${STEAM_PATH}/steamcmd && \
-    ./steamcmd.sh +runscript ${STEAM_PATH}/hlds.txt \
+RUN curl -sL "${STEAMCMD_URL}" | tar xzvf - && \
+    file ${STEAM_PATH}/linux32/steamcmd && \
+    ./steamcmd.sh +runscript ${STEAM_PATH}/hlds.txt
 
-RUN mkdir -p $HOME/.steam/sdk32 \
+RUN mkdir -p $HOME/.steam \
     && ln -s ${STEAM_PATH}/linux32 $HOME/.steam/sdk32 \
     && echo 70 > ${HLDS_PATH}/steam_appid.txt
 
 
-# Upade GeoIP database
-RUN curl -L -o ${HLDS_PATH}/cstrike/addons/amxmodx/data/GeoLite2-Country.mmdb ${GEOLITE_URL}
-
 RUN curl -L ${BASE_PACK} | bsdtar -xf - -C ${HLDS_PATH} && \
     chmod +x ${HLDS_PATH}/hlds_* && \
-    mv ${HLDS_PATH}/cstrike ${HLDS_PATH}/cstrike_base
+    curl -L -o ${HLDS_PATH}/cstrike/addons/amxmodx/data/GeoLite2-Country.mmdb ${GEOLITE_URL}
+
+RUN mv ${HLDS_PATH}/cstrike ${HLDS_PATH}/cstrike_base
 
 WORKDIR ${HLDS_PATH}
 
