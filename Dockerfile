@@ -8,6 +8,9 @@ ENV SERVER_GAME=cstrike
 ENV SERVER_PASSWORD="change-me"
 ENV STEAM_PATH="/opt/steam"
 ENV HLDS_PATH="${STEAM_PATH}/hlds"
+ENV BASE_PACK="https://github.com/PluginyCS/BasePack/releases/download/2.1.0/BasePack.zip"
+ENV GEOLITE_URL="https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-Country.mmdb"
+ENV STEAMCMD_URL="media.steampowered.com/client/installer/steamcmd_linux.tar.gz"
 
 # Installs the necessary dependencies for the SteamCMD installer.
 RUN dpkg --add-architecture i386 && \
@@ -32,20 +35,19 @@ WORKDIR ${STEAM_PATH}
 COPY ./hlds.txt ${STEAM_PATH}
 
 # Downloads and extracts the SteamCMD installer.
-RUN curl -v -sL media.steampowered.com/client/installer/steamcmd_linux.tar.gz | tar xzvf - && \
-    file /opt/steam/linux32/steamcmd && \
-    ./steamcmd.sh +runscript ${STEAM_PATH}/hlds.txt
+RUN curl -sL ${STEAMCMD_URL} | tar xzvf - && \
+    file ${STEAM_PATH}/steamcmd && \
+    ./steamcmd.sh +runscript ${STEAM_PATH}/hlds.txt \
 
-RUN mkdir -p $HOME/.steam \
+RUN mkdir -p $HOME/.steam/sdk32 \
     && ln -s ${STEAM_PATH}/linux32 $HOME/.steam/sdk32 \
     && echo 70 > ${HLDS_PATH}/steam_appid.txt
 
 
 # Upade GeoIP database
-#RUN curl -L -o ${HLDS_PATH}/cstrike/addons/amxmodx/data/GeoLite2-Country.mmdb \
-#  "https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-Country.mmdb"
+RUN curl -L -o ${HLDS_PATH}/cstrike/addons/amxmodx/data/GeoLite2-Country.mmdb ${GEOLITE_URL}
 
-RUN curl -L "https://github.com/AMXX-pl/BasePack/releases/download/1.2.0/base_pack.zip" | bsdtar -xf - -C ${HLDS_PATH} && \
+RUN curl -L ${BASE_PACK} | bsdtar -xf - -C ${HLDS_PATH} && \
     chmod +x ${HLDS_PATH}/hlds_* && \
     mv ${HLDS_PATH}/cstrike ${HLDS_PATH}/cstrike_base
 
