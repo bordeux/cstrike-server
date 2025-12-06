@@ -85,6 +85,26 @@ To customize your server:
 1. Edit files in the `./cstrike` directory
 2. Restart the container: `docker-compose restart`
 
+### Configuration Overwrites
+
+If you need to apply custom configurations that should be copied on every container start, you can use the `cstrike_overwrites` directory:
+
+1. Create a directory inside the container at `${HLDS_PATH}/cstrike_overwrites`
+2. Place your custom configuration files with the same directory structure as the `cstrike` folder
+3. On every container start, files from `cstrike_overwrites` will be copied to `cstrike`, overwriting existing files
+
+This is useful for:
+- Maintaining custom server configurations
+- Version controlling your server settings
+- Ensuring specific files are always applied on restart
+
+**Example:**
+```bash
+# Mount a local directory with your custom configs
+# Add to docker-compose.yml volumes:
+- ./my-custom-configs:/opt/hlds/cstrike_overwrites
+```
+
 ## Commands
 
 ### Start the server

@@ -42,8 +42,8 @@ RUN mkdir -p $HOME/.steam \
 
 
 # Upade GeoIP database
-RUN curl -L -o ${HLDS_PATH}/cstrike/addons/amxmodx/data/GeoLite2-Country.mmdb \
-  "https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-Country.mmdb"
+#RUN curl -L -o ${HLDS_PATH}/cstrike/addons/amxmodx/data/GeoLite2-Country.mmdb \
+#  "https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-Country.mmdb"
 
 RUN curl -L "https://github.com/AMXX-pl/BasePack/releases/download/1.2.0/base_pack.zip" | bsdtar -xf - -C ${HLDS_PATH} && \
     chmod +x ${HLDS_PATH}/hlds_* && \
