@@ -10,5 +10,14 @@ else
     echo "Installation already exists. Skipping copy."
 fi
 
+# Check for overwrites directory and copy files if it exists
+if [ -d "${HLDS_PATH}/cstrike_overwrites" ]; then
+    echo "cstrike_overwrites directory found. Copying files to cstrike..."
+    cp -r ${HLDS_PATH}/cstrike_overwrites/* ${HLDS_PATH}/cstrike/
+    echo "Overwrites copied successfully."
+else
+    echo "No cstrike_overwrites directory found. Skipping."
+fi
+
 # Run the server
 start.sh
