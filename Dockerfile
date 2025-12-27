@@ -8,6 +8,7 @@ ENV SERVER_GAME=cstrike
 ENV SERVER_PASSWORD="change-me"
 ENV ENABLE_HTTP_SERVER=1
 ENV HTTP_SERVER_PORT=8080
+ENV AMXMODX_AUTOCOMPILE=1
 ENV STEAM_PATH="/opt/steam"
 ENV HLDS_PATH="${STEAM_PATH}/hlds"
 ENV BASE_PACK="https://github.com/bordeux/amxx-base-pack/archive/refs/heads/master.zip"
@@ -28,9 +29,12 @@ RUN groupadd -r steam && \
 
 COPY ./start.sh /usr/bin
 COPY ./entrypoint.sh /usr/bin
+COPY ./entrypoint.sh.d /usr/bin/entrypoint.sh.d
 COPY ./nginx.conf /etc/nginx/nginx.conf
 
-RUN chmod +x /usr/bin/start.sh && chmod +x /usr/bin/entrypoint.sh
+RUN chmod +x /usr/bin/start.sh && \
+    chmod +x /usr/bin/entrypoint.sh && \
+    chmod +x /usr/bin/entrypoint.sh.d/*.sh
 
 # Sets the user to the steam user.
 USER steam
@@ -55,7 +59,8 @@ RUN curl -L ${BASE_PACK} | bsdtar -xf - --strip-components=1 -C ${HLDS_PATH} && 
 
 RUN echo "" >> ${HLDS_PATH}/cstrike/server.cfg && \
     echo "// Execute environment-based CVAR configuration" >> ${HLDS_PATH}/cstrike/server.cfg && \
-    echo "exec env_cvar.cfg" >> ${HLDS_PATH}/cstrike/server.cfg
+    echo "exec env_cvar.cfg" >> ${HLDS_PATH}/cstrike/server.cfg && \
+    chmod +x ${HLDS_PATH}/cstrike/addons/amxmodx/scripting/amxxpc
 
 RUN mv ${HLDS_PATH}/cstrike ${HLDS_PATH}/cstrike_base
 
