@@ -6,6 +6,8 @@ A containerized Counter-Strike 1.6 dedicated server based on HLDS (Half-Life Ded
 
 - Based on Ubuntu 24.04
 - Includes AMX Mod X and [amx-base-pack](https://github.com/bordeux/amxx-base-pack)
+- Dynamic CVAR configuration via environment variables
+- HTTP server for fast content downloads (enabled by default)
 - Persistent configuration and game data
 - Easy deployment with Docker Compose
 - Automated builds via GitHub Actions
@@ -73,12 +75,80 @@ Configure the server by modifying the environment variables in `docker-compose.y
 | `SERVER_MAX_PLAYERS` | `20` | Maximum number of players |
 | `SERVER_GAME` | `cstrike` | Game type |
 | `SERVER_PASSWORD` | `change-me` | Server password (change this!) |
+| `ENABLE_HTTP_SERVER` | `1` | Enable HTTP server for fast downloads (0=disabled, 1=enabled) |
+| `HTTP_SERVER_PORT` | `8080` | HTTP server port |
 
 ### Ports
 
 The server exposes the following ports:
 - **27015/udp** - Game server (primary)
 - **27015/tcp** - Game server
+- **8080/tcp** - HTTP server (if enabled, configurable via HTTP_SERVER_PORT)
+
+### Dynamic CVAR Configuration
+
+You can configure server CVARs (console variables) dynamically using environment variables with the `CVAR_` prefix. These will be automatically written to `env_cvar.cfg` on container start.
+
+**Usage:**
+```yaml
+environment:
+  - CVAR_SV_GRAVITY=600
+  - CVAR_MP_ROUNDTIME=3
+  - CVAR_SV_ALLTALK=1
+```
+
+This generates `cstrike/env_cvar.cfg`:
+```
+sv_gravity 600
+mp_roundtime 3
+sv_alltalk 1
+```
+
+**Important:**
+- CVAR names are automatically converted to lowercase
+- Use underscores in environment variable names (e.g., `CVAR_SV_GRAVITY`)
+- The file is regenerated on every container start
+- CVARs are automatically loaded via `exec env_cvar.cfg` in `server.cfg`
+
+### HTTP Server (Fast Downloads)
+
+The HTTP server is enabled by default and serves game content (maps, models, sounds, sprites, gfx) via nginx. This allows players to download custom content much faster than the built-in game server downloads.
+
+**Features:**
+- Fast HTTP downloads for custom content
+- Serves only specific directories: `sound`, `sprites`, `gfx`, `maps`, `models`
+- Directory listing enabled for easy browsing
+- Configurable port (default: 8080)
+
+**Access the HTTP server:**
+```bash
+# List available maps
+curl http://your-server-ip:8080/maps/
+
+# Download a custom map
+curl http://your-server-ip:8080/maps/de_custom.bsp
+```
+
+**Disable HTTP server:**
+To disable the HTTP server, set the environment variable in your `docker-compose.yml`:
+```yaml
+environment:
+  - ENABLE_HTTP_SERVER=0
+```
+
+**Change HTTP server port:**
+```yaml
+environment:
+  - HTTP_SERVER_PORT=80
+```
+
+**Configure in-game downloads:**
+Add to your `server.cfg`:
+```
+sv_downloadurl "http://your-server-ip:8080"
+sv_allowdownload 1
+sv_allowupload 1
+```
 
 ## Data Persistence
 
