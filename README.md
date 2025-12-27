@@ -6,6 +6,7 @@ A containerized Counter-Strike 1.6 dedicated server based on HLDS (Half-Life Ded
 
 - Based on Ubuntu 24.04
 - Includes AMX Mod X and [amx-base-pack](https://github.com/bordeux/amxx-base-pack)
+- Dynamic CVAR configuration via environment variables
 - HTTP server for fast content downloads (enabled by default)
 - Persistent configuration and game data
 - Easy deployment with Docker Compose
@@ -83,6 +84,31 @@ The server exposes the following ports:
 - **27015/udp** - Game server (primary)
 - **27015/tcp** - Game server
 - **8080/tcp** - HTTP server (if enabled, configurable via HTTP_SERVER_PORT)
+
+### Dynamic CVAR Configuration
+
+You can configure server CVARs (console variables) dynamically using environment variables with the `CVAR_` prefix. These will be automatically written to `env_cvar.cfg` on container start.
+
+**Usage:**
+```yaml
+environment:
+  - CVAR_SV_GRAVITY=600
+  - CVAR_MP_ROUNDTIME=3
+  - CVAR_SV_ALLTALK=1
+```
+
+This generates `cstrike/env_cvar.cfg`:
+```
+sv_gravity 600
+mp_roundtime 3
+sv_alltalk 1
+```
+
+**Important:**
+- CVAR names are automatically converted to lowercase
+- Use underscores in environment variable names (e.g., `CVAR_SV_GRAVITY`)
+- The file is regenerated on every container start
+- CVARs are automatically loaded via `exec env_cvar.cfg` in `server.cfg`
 
 ### HTTP Server (Fast Downloads)
 

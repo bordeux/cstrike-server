@@ -53,6 +53,10 @@ RUN curl -L ${BASE_PACK} | bsdtar -xf - --strip-components=1 -C ${HLDS_PATH} && 
     chmod +x ${HLDS_PATH}/hlds_* && \
     curl -L -o ${HLDS_PATH}/cstrike/addons/amxmodx/data/GeoLite2-Country.mmdb ${GEOLITE_URL}
 
+RUN echo "" >> ${HLDS_PATH}/cstrike/server.cfg && \
+    echo "// Execute environment-based CVAR configuration" >> ${HLDS_PATH}/cstrike/server.cfg && \
+    echo "exec env_cvar.cfg" >> ${HLDS_PATH}/cstrike/server.cfg
+
 RUN mv ${HLDS_PATH}/cstrike ${HLDS_PATH}/cstrike_base
 
 WORKDIR ${HLDS_PATH}
