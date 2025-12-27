@@ -16,13 +16,7 @@ if [ "${AMXMODX_AUTOCOMPILE:-1}" = "1" ]; then
             if [ -f "$sma_file" ]; then
                 plugin_name="${sma_file%.sma}"
                 echo "Compiling: $sma_file -> ../plugins/${plugin_name}.amxx"
-
-                if ./amxxpc "$sma_file" -o"../plugins/${plugin_name}.amxx"; then
-                    ((COMPILE_COUNT++))
-                else
-                    echo "WARNING: Failed to compile $sma_file"
-                    ((FAILED_COUNT++))
-                fi
+                ./amxxpc "$sma_file" -o"../plugins/${plugin_name}.amxx"
             fi
         done
 
