@@ -19,7 +19,9 @@ ENV STEAMCMD_URL="media.steampowered.com/client/installer/steamcmd_linux.tar.gz"
 RUN dpkg --add-architecture i386 && \
     apt-get update && \
     apt-get install -y --no-install-recommends libarchive-tools curl rsync file libc6:i386 lib32stdc++6 ca-certificates nginx gettext-base && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && \
+    rm -f /etc/nginx/sites-enabled/default && \
+    service nginx stop 2>/dev/null || true
 
 # Creates a new user and group for the SteamCMD installer.
 RUN groupadd -r steam && \
@@ -51,6 +53,8 @@ RUN mkdir -p $HOME/.steam \
 RUN curl -L ${BASE_PACK} | bsdtar -xf - --strip-components=1 -C ${HLDS_PATH} && \
     chmod +x ${HLDS_PATH}/hlds_* && \
     curl -L -o ${HLDS_PATH}/cstrike/addons/amxmodx/data/GeoLite2-Country.mmdb ${GEOLITE_URL}
+
+RUN chmod +x ${HLDS_PATH}/hltv
 
 RUN mv ${HLDS_PATH}/cstrike ${HLDS_PATH}/cstrike_base
 

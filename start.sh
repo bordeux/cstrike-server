@@ -15,6 +15,8 @@ trap 'echo "Received shutdown signal..."; SHUTDOWN=1; killall hlds_linux hltv ng
 
 echo "Starting Counter-Strike server..."
 
+# Kill any existing nginx processes (safety check)
+killall nginx 2>/dev/null || true
 
 # Start HTTP server (nginx) in the background if enabled
 if [ "$ENABLE_HTTP_SERVER" = "1" ]; then

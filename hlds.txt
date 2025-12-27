@@ -6,4 +6,7 @@ app_set_config 90 mod cstrike
 app_update 90 -beta steam_legacy validate
 app_update 90 -beta steam_legacy validate
 app_update 90 -beta steam_legacy  validate
+app_update 740 -beta steam_legacy  validate
+app_update 740 -beta steam_legacy  validate
+app_update 740 -beta steam_legacy  validate
 quit
