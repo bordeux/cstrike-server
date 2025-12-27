@@ -6,6 +6,8 @@ A containerized Counter-Strike 1.6 dedicated server based on HLDS (Half-Life Ded
 
 - Based on Ubuntu 24.04
 - Includes AMX Mod X and [amx-base-pack](https://github.com/bordeux/amxx-base-pack)
+- HTTP server for fast content downloads (enabled by default)
+- HLTV support for automatic game recording (enabled by default)
 - Persistent configuration and game data
 - Easy deployment with Docker Compose
 - Automated builds via GitHub Actions
@@ -73,12 +75,77 @@ Configure the server by modifying the environment variables in `docker-compose.y
 | `SERVER_MAX_PLAYERS` | `20` | Maximum number of players |
 | `SERVER_GAME` | `cstrike` | Game type |
 | `SERVER_PASSWORD` | `change-me` | Server password (change this!) |
+| `ENABLE_HLTV` | `1` | Enable HLTV for game recording (0=disabled, 1=enabled) |
+| `ENABLE_HTTP_SERVER` | `1` | Enable HTTP server for fast downloads (0=disabled, 1=enabled) |
+| `HTTP_SERVER_PORT` | `8080` | HTTP server port |
 
 ### Ports
 
 The server exposes the following ports:
 - **27015/udp** - Game server (primary)
 - **27015/tcp** - Game server
+- **27025/udp** - HLTV (if enabled, uses SERVER_PORT + 10)
+- **27025/tcp** - HLTV (if enabled, uses SERVER_PORT + 10)
+- **8080/tcp** - HTTP server (if enabled, configurable via HTTP_SERVER_PORT)
+
+### HTTP Server (Fast Downloads)
+
+The HTTP server is enabled by default and serves game content (maps, models, sounds, sprites, gfx) via nginx. This allows players to download custom content much faster than the built-in game server downloads.
+
+**Features:**
+- Fast HTTP downloads for custom content
+- Serves only specific directories: `sound`, `sprites`, `gfx`, `maps`, `models`
+- Directory listing enabled for easy browsing
+- Configurable port (default: 8080)
+
+**Access the HTTP server:**
+```bash
+# List available maps
+curl http://your-server-ip:8080/maps/
+
+# Download a custom map
+curl http://your-server-ip:8080/maps/de_custom.bsp
+```
+
+**Disable HTTP server:**
+To disable the HTTP server, set the environment variable in your `docker-compose.yml`:
+```yaml
+environment:
+  - ENABLE_HTTP_SERVER=0
+```
+
+**Change HTTP server port:**
+```yaml
+environment:
+  - HTTP_SERVER_PORT=80
+```
+
+**Configure in-game downloads:**
+Add to your `server.cfg`:
+```
+sv_downloadurl "http://your-server-ip:8080"
+sv_allowdownload 1
+sv_allowupload 1
+```
+
+### HLTV (Half-Life TV)
+
+HLTV is enabled by default and automatically records all games played on the server. This allows spectators to watch live games with a delay and provides automatic demo recording.
+
+**Features:**
+- Automatic game recording with `+record auto`
+- Spectator support
+- Uses port `SERVER_PORT + 10` (default: 27025)
+
+**Disable HLTV:**
+To disable HLTV, set the environment variable in your `docker-compose.yml`:
+```yaml
+environment:
+  - ENABLE_HLTV=0
+```
+
+**Recorded Demos:**
+Demo files are stored in the `cstrike` directory and can be played back in Counter-Strike.
 
 ## Data Persistence
 

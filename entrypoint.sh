@@ -19,5 +19,5 @@ else
     echo "No cstrike_overwrites directory found. Skipping."
 fi
 
-# Run the server
-start.sh
+# Execute the provided command (or default CMD from Dockerfile)
+exec "$@"

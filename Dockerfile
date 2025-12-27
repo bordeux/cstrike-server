@@ -6,6 +6,9 @@ ENV SERVER_LAN=0
 ENV SERVER_MAX_PLAYERS=20
 ENV SERVER_GAME=cstrike
 ENV SERVER_PASSWORD="change-me"
+ENV ENABLE_HLTV=1
+ENV ENABLE_HTTP_SERVER=1
+ENV HTTP_SERVER_PORT=8080
 ENV STEAM_PATH="/opt/steam"
 ENV HLDS_PATH="${STEAM_PATH}/hlds"
 ENV BASE_PACK="https://github.com/bordeux/amxx-base-pack/archive/refs/heads/master.zip"
@@ -15,7 +18,7 @@ ENV STEAMCMD_URL="media.steampowered.com/client/installer/steamcmd_linux.tar.gz"
 # Installs the necessary dependencies for the SteamCMD installer.
 RUN dpkg --add-architecture i386 && \
     apt-get update && \
-    apt-get install -y --no-install-recommends libarchive-tools curl rsync file libc6:i386 lib32stdc++6 ca-certificates && \
+    apt-get install -y --no-install-recommends libarchive-tools curl rsync file libc6:i386 lib32stdc++6 ca-certificates nginx gettext-base && \
     rm -rf /var/lib/apt/lists/*
 
 # Creates a new user and group for the SteamCMD installer.
@@ -24,6 +27,7 @@ RUN groupadd -r steam && \
 
 COPY ./start.sh /usr/bin
 COPY ./entrypoint.sh /usr/bin
+COPY ./nginx.conf /etc/nginx/nginx.conf
 
 RUN chmod +x /usr/bin/start.sh && chmod +x /usr/bin/entrypoint.sh
 
@@ -53,3 +57,4 @@ RUN mv ${HLDS_PATH}/cstrike ${HLDS_PATH}/cstrike_base
 WORKDIR ${HLDS_PATH}
 
 ENTRYPOINT ["/usr/bin/entrypoint.sh"]
+CMD ["/usr/bin/start.sh"]
