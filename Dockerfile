@@ -6,7 +6,6 @@ ENV SERVER_LAN=0
 ENV SERVER_MAX_PLAYERS=20
 ENV SERVER_GAME=cstrike
 ENV SERVER_PASSWORD="change-me"
-ENV ENABLE_HLTV=1
 ENV ENABLE_HTTP_SERVER=1
 ENV HTTP_SERVER_PORT=8080
 ENV STEAM_PATH="/opt/steam"
@@ -53,8 +52,6 @@ RUN mkdir -p $HOME/.steam \
 RUN curl -L ${BASE_PACK} | bsdtar -xf - --strip-components=1 -C ${HLDS_PATH} && \
     chmod +x ${HLDS_PATH}/hlds_* && \
     curl -L -o ${HLDS_PATH}/cstrike/addons/amxmodx/data/GeoLite2-Country.mmdb ${GEOLITE_URL}
-
-RUN chmod +x ${HLDS_PATH}/hltv
 
 RUN mv ${HLDS_PATH}/cstrike ${HLDS_PATH}/cstrike_base
 

@@ -7,7 +7,6 @@ A containerized Counter-Strike 1.6 dedicated server based on HLDS (Half-Life Ded
 - Based on Ubuntu 24.04
 - Includes AMX Mod X and [amx-base-pack](https://github.com/bordeux/amxx-base-pack)
 - HTTP server for fast content downloads (enabled by default)
-- HLTV support for automatic game recording (enabled by default)
 - Persistent configuration and game data
 - Easy deployment with Docker Compose
 - Automated builds via GitHub Actions
@@ -75,7 +74,6 @@ Configure the server by modifying the environment variables in `docker-compose.y
 | `SERVER_MAX_PLAYERS` | `20` | Maximum number of players |
 | `SERVER_GAME` | `cstrike` | Game type |
 | `SERVER_PASSWORD` | `change-me` | Server password (change this!) |
-| `ENABLE_HLTV` | `1` | Enable HLTV for game recording (0=disabled, 1=enabled) |
 | `ENABLE_HTTP_SERVER` | `1` | Enable HTTP server for fast downloads (0=disabled, 1=enabled) |
 | `HTTP_SERVER_PORT` | `8080` | HTTP server port |
 
@@ -84,8 +82,6 @@ Configure the server by modifying the environment variables in `docker-compose.y
 The server exposes the following ports:
 - **27015/udp** - Game server (primary)
 - **27015/tcp** - Game server
-- **27025/udp** - HLTV (if enabled, uses SERVER_PORT + 10)
-- **27025/tcp** - HLTV (if enabled, uses SERVER_PORT + 10)
 - **8080/tcp** - HTTP server (if enabled, configurable via HTTP_SERVER_PORT)
 
 ### HTTP Server (Fast Downloads)
@@ -127,25 +123,6 @@ sv_downloadurl "http://your-server-ip:8080"
 sv_allowdownload 1
 sv_allowupload 1
 ```
-
-### HLTV (Half-Life TV)
-
-HLTV is enabled by default and automatically records all games played on the server. This allows spectators to watch live games with a delay and provides automatic demo recording.
-
-**Features:**
-- Automatic game recording with `+record auto`
-- Spectator support
-- Uses port `SERVER_PORT + 10` (default: 27025)
-
-**Disable HLTV:**
-To disable HLTV, set the environment variable in your `docker-compose.yml`:
-```yaml
-environment:
-  - ENABLE_HLTV=0
-```
-
-**Recorded Demos:**
-Demo files are stored in the `cstrike` directory and can be played back in Counter-Strike.
 
 ## Data Persistence
 
