@@ -6,6 +6,7 @@ A containerized Counter-Strike 1.6 dedicated server based on HLDS (Half-Life Ded
 
 - Based on Ubuntu 24.04
 - Includes AMX Mod X and [amx-base-pack](https://github.com/bordeux/amxx-base-pack)
+- Auto-compile AMX Mod X plugins on startup (enabled by default)
 - Dynamic CVAR configuration via environment variables
 - HTTP server for fast content downloads (enabled by default)
 - Persistent configuration and game data
@@ -77,6 +78,7 @@ Configure the server by modifying the environment variables in `docker-compose.y
 | `SERVER_PASSWORD` | `change-me` | Server password (change this!) |
 | `ENABLE_HTTP_SERVER` | `1` | Enable HTTP server for fast downloads (0=disabled, 1=enabled) |
 | `HTTP_SERVER_PORT` | `8080` | HTTP server port |
+| `AMXMODX_AUTOCOMPILE` | `1` | Auto-compile .sma plugins on startup (0=disabled, 1=enabled) |
 
 ### Ports
 
@@ -84,6 +86,26 @@ The server exposes the following ports:
 - **27015/udp** - Game server (primary)
 - **27015/tcp** - Game server
 - **8080/tcp** - HTTP server (if enabled, configurable via HTTP_SERVER_PORT)
+
+### AMX Mod X Auto-Compile
+
+The server automatically compiles all `.sma` source files from `cstrike/addons/amxmodx/scripting/` on container startup. Compiled `.amxx` plugins are placed in `cstrike/addons/amxmodx/plugins/`.
+
+**Features:**
+- Automatically compiles all `.sma` files on every container start
+- Reports compilation results (success/failures)
+- Allows you to develop plugins without manual compilation
+
+**Disable auto-compile:**
+```yaml
+environment:
+  - AMXMODX_AUTOCOMPILE=0
+```
+
+**Workflow:**
+1. Place your `.sma` files in `cstrike/addons/amxmodx/scripting/`
+2. Restart the container
+3. Compiled `.amxx` files will be in `cstrike/addons/amxmodx/plugins/`
 
 ### Dynamic CVAR Configuration
 
@@ -224,11 +246,27 @@ docker-compose -f docker-compose.build.yml up -d --build
 ├── Dockerfile              # Container image definition
 ├── docker-compose.yml      # Production deployment (pre-built image)
 ├── docker-compose.build.yml # Development (local build)
-├── entrypoint.sh          # Container entrypoint script
+├── entrypoint.sh          # Main entrypoint script
+├── entrypoint.sh.d/       # Modular entrypoint scripts
+│   ├── 01-copy-base.sh    # Copy base files on first run
+│   ├── 02-copy-overwrites.sh # Copy overwrite files
+│   ├── 03-generate-cvars.sh  # Generate env_cvar.cfg
+│   └── 04-compile-plugins.sh # Auto-compile AMXMODX plugins
 ├── start.sh               # Server startup script
+├── nginx.conf             # HTTP server configuration
 ├── hlds.txt               # SteamCMD installation script
 └── cstrike/               # Server data directory (created on first run)
 ```
+
+### Custom Entrypoint Scripts
+
+The entrypoint is modular and executes scripts from `entrypoint.sh.d/` in alphabetical order. You can add custom scripts by:
+
+1. Creating a new script in `entrypoint.sh.d/` with a numbered prefix (e.g., `05-custom.sh`)
+2. Making it executable: `chmod +x entrypoint.sh.d/05-custom.sh`
+3. Rebuilding the Docker image
+
+Scripts are executed in order: `01-*.sh`, `02-*.sh`, etc. Each script has access to all environment variables.
 
 ## GitHub Actions
 
