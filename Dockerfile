@@ -59,7 +59,7 @@ RUN curl -L ${BASE_PACK} | bsdtar -xf - --strip-components=1 -C ${HLDS_PATH} && 
 
 RUN echo "" >> ${HLDS_PATH}/cstrike/server.cfg && \
     echo "// Execute environment-based CVAR configuration" >> ${HLDS_PATH}/cstrike/server.cfg && \
-    echo "exec env_cvar.cfg" >> ${HLDS_PATH}/cstrike/server.cfg \
+    echo "exec env_cvar.cfg" >> ${HLDS_PATH}/cstrike/server.cfg && \
     chmod +x ${HLDS_PATH}/cstrike/addons/amxmodx/scripting/amxxpc
 
 RUN mv ${HLDS_PATH}/cstrike ${HLDS_PATH}/cstrike_base
