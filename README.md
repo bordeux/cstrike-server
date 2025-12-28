@@ -80,6 +80,7 @@ Configure the server by modifying the environment variables in `docker-compose.y
 | `HLDS_ARGS` | `""` | Additional custom arguments for hlds_run |
 | `ENABLE_HTTP_SERVER` | `1` | Enable HTTP server for fast downloads (0=disabled, 1=enabled) |
 | `HTTP_SERVER_PORT` | `8080` | HTTP server port |
+| `PROCESS_TEMPLATES` | `1` | Process .tmpl files with gomplate on startup (0=disabled, 1=enabled) |
 | `AMXMODX_AUTOCOMPILE` | `1` | Auto-compile .sma plugins on startup (0=disabled, 1=enabled) |
 
 **Custom Server Arguments:**
@@ -160,6 +161,12 @@ environment:
 ```
 
 Place template files in your mounted `cstrike` directory and they'll be processed automatically on startup.
+
+**Disable template processing:**
+```yaml
+environment:
+  - PROCESS_TEMPLATES=0
+```
 
 ### Dynamic CVAR Configuration
 
@@ -308,7 +315,8 @@ docker-compose -f docker-compose.build.yml up -d --build
 │   ├── 30-generate-cvars.sh  # Generate env_cvar.cfg
 │   └── 40-compile-plugins.sh # Auto-compile AMXMODX plugins
 ├── helpers/               # Helper utility scripts
-│   └── amxmodx-compile.sh # Compile AMXMODX plugins
+│   ├── amxmodx-compile.sh # Compile AMXMODX plugins
+│   └── process-templates.sh # Process gomplate templates
 ├── start.sh               # Server startup script
 ├── nginx.conf             # HTTP server configuration
 ├── hlds.txt               # SteamCMD installation script
@@ -342,6 +350,21 @@ docker exec cstrike-server ${HELPERS_PATH}/amxmodx-compile.sh /opt/steam/hlds/cs
 
 # Or with full path
 docker exec cstrike-server /usr/bin/helpers/amxmodx-compile.sh /opt/steam/hlds/cstrike/addons/amxmodx
+```
+
+**`process-templates.sh`**
+Process template files (`.tmpl`) using gomplate.
+
+Usage:
+```bash
+# Inside container
+${HELPERS_PATH}/process-templates.sh /opt/steam/hlds/cstrike
+
+# From host (via docker exec)
+docker exec cstrike-server ${HELPERS_PATH}/process-templates.sh /opt/steam/hlds/cstrike
+
+# Process templates in a specific directory
+docker exec cstrike-server ${HELPERS_PATH}/process-templates.sh /opt/steam/hlds/cstrike/cfg
 ```
 
 You can create additional helper scripts by:
