@@ -1,6 +1,7 @@
 FROM ubuntu:24.04
 
 LABEL org.opencontainers.image.description="Counter Strike 1.6 server with amxmodx and usefull addons"
+LABEL org.opencontainers.image.source=https://github.com/bordeux/cstrike-server
 
 ENV SERVER_PORT=27015
 ENV SERVER_MAP=de_dust2
