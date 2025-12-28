@@ -12,6 +12,7 @@ ENV AMXMODX_AUTOCOMPILE=1
 ENV STEAM_PATH="/opt/steam"
 ENV HLDS_PATH="${STEAM_PATH}/hlds"
 ENV CSTRIKE_BASE_PATH="${HLDS_PATH}/cstrike_base"
+ENV CSTRIKE_PATH="${HLDS_PATH}/cstrike"
 ENV HELPERS_PATH="/usr/bin/helpers"
 ENV BASE_PACK="https://github.com/bordeux/amxx-base-pack/archive/refs/heads/master.zip"
 ENV GEOLITE_URL="https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-Country.mmdb"
@@ -66,7 +67,7 @@ RUN echo "" >> ${HLDS_PATH}/cstrike/server.cfg && \
     echo "exec env_cvar.cfg" >> ${HLDS_PATH}/cstrike/server.cfg && \
     chmod +x ${HLDS_PATH}/cstrike/addons/amxmodx/scripting/amxxpc
 
-RUN mv ${HLDS_PATH}/cstrike ${CSTRIKE_BASE_PATH}
+RUN mv ${CSTRIKE_PATH} ${CSTRIKE_BASE_PATH}
 
 WORKDIR ${HLDS_PATH}
 
