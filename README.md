@@ -138,7 +138,7 @@ The HTTP server is enabled by default and serves game content (maps, models, sou
 
 **Features:**
 - Fast HTTP downloads for custom content
-- Serves only specific directories: `sound`, `sprites`, `gfx`, `maps`, `models`
+- Serves only specific directories: `sound`, `sprites`, `gfx`, `maps`, `models`, `overviews`
 - Directory listing enabled for easy browsing
 - Configurable port (default: 8080)
 
