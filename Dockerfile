@@ -1,5 +1,7 @@
 FROM ubuntu:24.04
 
+LABEL org.opencontainers.image.description="Counter Strike 1.6 server with amxmodx and usefull addons"
+
 ENV SERVER_PORT=27015
 ENV SERVER_MAP=de_dust2
 ENV SERVER_LAN=0
