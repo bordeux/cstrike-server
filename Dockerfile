@@ -1,5 +1,8 @@
 FROM ubuntu:24.04
 
+LABEL org.opencontainers.image.description="Counter Strike 1.6 server with amxmodx and usefull addons"
+LABEL org.opencontainers.image.source=https://github.com/bordeux/cstrike-server
+
 ENV SERVER_PORT=27015
 ENV SERVER_MAP=de_dust2
 ENV SERVER_LAN=0
@@ -11,6 +14,8 @@ ENV HTTP_SERVER_PORT=8080
 ENV AMXMODX_AUTOCOMPILE=1
 ENV STEAM_PATH="/opt/steam"
 ENV HLDS_PATH="${STEAM_PATH}/hlds"
+ENV CSTRIKE_BASE_PATH="${HLDS_PATH}/cstrike_base"
+ENV CSTRIKE_PATH="${HLDS_PATH}/cstrike"
 ENV HELPERS_PATH="/usr/bin/helpers"
 ENV BASE_PACK="https://github.com/bordeux/amxx-base-pack/archive/refs/heads/master.zip"
 ENV GEOLITE_URL="https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-Country.mmdb"
@@ -65,7 +70,7 @@ RUN echo "" >> ${HLDS_PATH}/cstrike/server.cfg && \
     echo "exec env_cvar.cfg" >> ${HLDS_PATH}/cstrike/server.cfg && \
     chmod +x ${HLDS_PATH}/cstrike/addons/amxmodx/scripting/amxxpc
 
-RUN mv ${HLDS_PATH}/cstrike ${HLDS_PATH}/cstrike_base
+RUN mv ${CSTRIKE_PATH} ${CSTRIKE_BASE_PATH}
 
 WORKDIR ${HLDS_PATH}
 
