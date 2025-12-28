@@ -18,9 +18,10 @@ ENV HLDS_PATH="${STEAM_PATH}/hlds"
 ENV CSTRIKE_BASE_PATH="${HLDS_PATH}/cstrike_base"
 ENV CSTRIKE_PATH="${HLDS_PATH}/cstrike"
 ENV HELPERS_PATH="/usr/bin/helpers"
-ENV BASE_PACK="https://github.com/bordeux/amxx-base-pack/archive/refs/heads/master.zip"
-ENV GEOLITE_URL="https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-Country.mmdb"
-ENV STEAMCMD_URL="media.steampowered.com/client/installer/steamcmd_linux.tar.gz"
+
+ARG BASE_PACK="https://github.com/bordeux/amxx-base-pack/archive/refs/heads/master.zip"
+ARG GEOLITE_URL="https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-Country.mmdb"
+ARG STEAMCMD_URL="media.steampowered.com/client/installer/steamcmd_linux.tar.gz"
 
 # Installs the necessary dependencies for the SteamCMD installer.
 RUN dpkg --add-architecture i386 && \
