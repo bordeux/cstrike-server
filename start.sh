@@ -7,6 +7,7 @@ NGINX_PID=0
 # Default environment variables if not set
 ENABLE_HTTP_SERVER=${ENABLE_HTTP_SERVER:-1}
 HTTP_SERVER_PORT=${HTTP_SERVER_PORT:-8080}
+HLDS_ARGS=${HLDS_ARGS:-}
 
 # Trap signals for graceful shutdown
 trap 'echo "Received shutdown signal..."; SHUTDOWN=1; killall hlds_linux nginx 2>/dev/null || true; [ $NGINX_PID -ne 0 ] && kill $NGINX_PID 2>/dev/null || true' SIGTERM SIGINT
@@ -40,7 +41,8 @@ while [ $SHUTDOWN -eq 0 ]; do
         +maxplayers "${SERVER_MAX_PLAYERS}" \
         +log on \
         +rcon_password "${SERVER_PASSWORD}" \
-        +map "${SERVER_MAP}"
+        +map "${SERVER_MAP}" \
+        ${HLDS_ARGS}
 
     EXIT_CODE=$?
 

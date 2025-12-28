@@ -76,9 +76,25 @@ Configure the server by modifying the environment variables in `docker-compose.y
 | `SERVER_MAX_PLAYERS` | `20` | Maximum number of players |
 | `SERVER_GAME` | `cstrike` | Game type |
 | `SERVER_PASSWORD` | `change-me` | Server password (change this!) |
+| `HLDS_ARGS` | `""` | Additional custom arguments for hlds_run |
 | `ENABLE_HTTP_SERVER` | `1` | Enable HTTP server for fast downloads (0=disabled, 1=enabled) |
 | `HTTP_SERVER_PORT` | `8080` | HTTP server port |
 | `AMXMODX_AUTOCOMPILE` | `1` | Auto-compile .sma plugins on startup (0=disabled, 1=enabled) |
+
+**Custom Server Arguments:**
+
+You can pass additional arguments to `hlds_run` using the `HLDS_ARGS` environment variable:
+
+```yaml
+environment:
+  - HLDS_ARGS="+sv_cheats 1 +mp_timelimit 45 +mp_friendlyfire 1"
+```
+
+This is useful for:
+- Enabling debug mode
+- Setting custom game rules
+- Passing additional console commands
+- Configuring advanced server settings
 
 ### Ports
 

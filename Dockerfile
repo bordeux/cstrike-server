@@ -9,6 +9,7 @@ ENV SERVER_LAN=0
 ENV SERVER_MAX_PLAYERS=20
 ENV SERVER_GAME=cstrike
 ENV SERVER_PASSWORD="change-me"
+ENV HLDS_ARGS=""
 ENV ENABLE_HTTP_SERVER=1
 ENV HTTP_SERVER_PORT=8080
 ENV AMXMODX_AUTOCOMPILE=1
@@ -68,6 +69,7 @@ RUN curl -L ${BASE_PACK} | bsdtar -xf - --strip-components=1 -C ${HLDS_PATH} && 
 RUN echo "" >> ${HLDS_PATH}/cstrike/server.cfg && \
     echo "// Execute environment-based CVAR configuration" >> ${HLDS_PATH}/cstrike/server.cfg && \
     echo "exec env_cvar.cfg" >> ${HLDS_PATH}/cstrike/server.cfg && \
+    echo "exec custom.cfg" >> ${HLDS_PATH}/cstrike/server.cfg && \
     chmod +x ${HLDS_PATH}/cstrike/addons/amxmodx/scripting/amxxpc
 
 RUN mv ${CSTRIKE_PATH} ${CSTRIKE_BASE_PATH}
