@@ -248,10 +248,12 @@ docker-compose -f docker-compose.build.yml up -d --build
 ├── docker-compose.build.yml # Development (local build)
 ├── entrypoint.sh          # Main entrypoint script
 ├── entrypoint.sh.d/       # Modular entrypoint scripts
-│   ├── 01-copy-base.sh    # Copy base files on first run
-│   ├── 02-copy-overwrites.sh # Copy overwrite files
-│   ├── 03-generate-cvars.sh  # Generate env_cvar.cfg
-│   └── 04-compile-plugins.sh # Auto-compile AMXMODX plugins
+│   ├── 10-copy-base.sh    # Copy base files on first run
+│   ├── 20-copy-overwrites.sh # Copy overwrite files
+│   ├── 30-generate-cvars.sh  # Generate env_cvar.cfg
+│   └── 40-compile-plugins.sh # Auto-compile AMXMODX plugins
+├── helpers/               # Helper utility scripts
+│   └── amxmodx-compile.sh # Compile AMXMODX plugins
 ├── start.sh               # Server startup script
 ├── nginx.conf             # HTTP server configuration
 ├── hlds.txt               # SteamCMD installation script
@@ -262,11 +264,36 @@ docker-compose -f docker-compose.build.yml up -d --build
 
 The entrypoint is modular and executes scripts from `entrypoint.sh.d/` in alphabetical order. You can add custom scripts by:
 
-1. Creating a new script in `entrypoint.sh.d/` with a numbered prefix (e.g., `05-custom.sh`)
-2. Making it executable: `chmod +x entrypoint.sh.d/05-custom.sh`
+1. Creating a new script in `entrypoint.sh.d/` with a numbered prefix (e.g., `50-custom.sh`)
+2. Making it executable: `chmod +x entrypoint.sh.d/50-custom.sh`
 3. Rebuilding the Docker image
 
-Scripts are executed in order: `01-*.sh`, `02-*.sh`, etc. Each script has access to all environment variables.
+Scripts are executed in order: `10-*.sh`, `20-*.sh`, etc. Each script has access to all environment variables.
+
+### Helper Scripts
+
+The image includes utility helper scripts in `${HELPERS_PATH}` (`/usr/bin/helpers/`) that can be called from entrypoint scripts, runtime, or manually:
+
+**`amxmodx-compile.sh`**
+Compile AMXMODX plugins from `.sma` source files.
+
+Usage:
+```bash
+# Inside container (using HELPERS_PATH env variable)
+${HELPERS_PATH}/amxmodx-compile.sh /opt/steam/hlds/cstrike/addons/amxmodx
+
+# From host (via docker exec)
+docker exec cstrike-server ${HELPERS_PATH}/amxmodx-compile.sh /opt/steam/hlds/cstrike/addons/amxmodx
+
+# Or with full path
+docker exec cstrike-server /usr/bin/helpers/amxmodx-compile.sh /opt/steam/hlds/cstrike/addons/amxmodx
+```
+
+You can create additional helper scripts by:
+1. Adding them to the `helpers/` directory
+2. Making them executable (`chmod +x helpers/your-script.sh`)
+3. Rebuilding the image
+4. Access them via `${HELPERS_PATH}/your-script.sh`
 
 ## GitHub Actions
 
