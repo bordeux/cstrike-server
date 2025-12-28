@@ -2,7 +2,7 @@
 # Auto-compile AMXMODX plugins if enabled
 
 if [ "${AMXMODX_AUTOCOMPILE:-1}" = "1" ]; then
-    AMXMODX_PATH="${HLDS_PATH}/cstrike/addons/amxmodx"
+    AMXMODX_PATH="${CSTRIKE_PATH}/addons/amxmodx"
 
     # Use the helper script to compile plugins
     "${HELPERS_PATH}/amxmodx-compile.sh" "$AMXMODX_PATH"

@@ -2,8 +2,6 @@
 # Helper script to compile AMXMODX plugins
 # Usage: amxmodx-compile.sh <path_to_amxmodx_folder>
 
-set -e
-
 if [ $# -eq 0 ]; then
     echo "ERROR: No path provided"
     echo "Usage: $0 <path_to_amxmodx_folder>"
@@ -31,11 +29,13 @@ if [ ! -d "$PLUGINS_DIR" ]; then
 fi
 
 echo "Auto-compiling AMXMODX plugins from: $SCRIPTING_DIR"
-cd "$SCRIPTING_DIR"
+cd "$SCRIPTING_DIR" || exit 1
 
 COMPILE_COUNT=0
 FAILED_COUNT=0
 
+# Set nullglob to handle case where no .sma files exist
+shopt -s nullglob
 for sma_file in *.sma; do
     if [ -f "$sma_file" ]; then
         plugin_name="${sma_file%.sma}"

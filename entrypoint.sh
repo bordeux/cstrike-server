@@ -13,11 +13,15 @@ if [ -d "$ENTRYPOINT_DIR" ]; then
             echo "Executing: $(basename "$script")"
             echo "=========================================="
 
-            # Source or execute the script
-            if bash "$script"; then
+            # Execute the script and capture exit code
+            bash "$script"
+            EXIT_CODE=$?
+
+            # Check result
+            if [ $EXIT_CODE -eq 0 ]; then
                 echo "✓ $(basename "$script") completed successfully"
             else
-                echo "✗ $(basename "$script") failed with exit code $?"
+                echo "✗ $(basename "$script") failed with exit code $EXIT_CODE"
                 # Continue with other scripts even if one fails
             fi
             echo ""
