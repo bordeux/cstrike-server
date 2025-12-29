@@ -6,6 +6,7 @@ A containerized Counter-Strike 1.6 dedicated server based on HLDS (Half-Life Ded
 
 - Based on Ubuntu 24.04
 - Includes AMX Mod X and [amx-base-pack](https://github.com/bordeux/amxx-base-pack)
+- HLTV (Half-Life TV) support for spectating and broadcasting matches (enabled by default)
 - Template processing with gomplate for dynamic configuration
 - Auto-compile AMX Mod X plugins on startup (enabled by default)
 - Dynamic CVAR configuration via environment variables
@@ -69,19 +70,22 @@ docker-compose -f docker-compose.build.yml up -d --build
 
 Configure the server by modifying the environment variables in `docker-compose.yml`:
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `SERVER_PORT` | `27015` | Server port |
-| `SERVER_MAP` | `de_dust2` | Starting map |
-| `SERVER_LAN` | `0` | LAN mode (0=internet, 1=LAN) |
-| `SERVER_MAX_PLAYERS` | `20` | Maximum number of players |
-| `SERVER_GAME` | `cstrike` | Game type |
+| Variable | Default     | Description |
+|----------|-------------|-------------|
+| `SERVER_PORT` | `27015`     | Server port |
+| `SERVER_MAP` | `de_dust2`  | Starting map |
+| `SERVER_LAN` | `0`         | LAN mode (0=internet, 1=LAN) |
+| `SERVER_MAX_PLAYERS` | `20`        | Maximum number of players |
+| `SERVER_GAME` | `cstrike`   | Game type |
 | `SERVER_PASSWORD` | `change-me` | Server password (change this!) |
-| `HLDS_ARGS` | `""` | Additional custom arguments for hlds_run |
-| `ENABLE_HTTP_SERVER` | `1` | Enable HTTP server for fast downloads (0=disabled, 1=enabled) |
-| `HTTP_SERVER_PORT` | `8080` | HTTP server port |
-| `PROCESS_TEMPLATES` | `1` | Process .tmpl files with gomplate on startup (0=disabled, 1=enabled) |
-| `AMXMODX_AUTOCOMPILE` | `1` | Auto-compile .sma plugins on startup (0=disabled, 1=enabled) |
+| `HLDS_ARGS` | `""`        | Additional custom arguments for hlds_run |
+| `HLTV_ENABLE` | `0`         | Enable HLTV for spectating and broadcasting (0=disabled, 1=enabled) |
+| `HLTV_PORT` | `27020`     | HLTV port |
+| `HLTV_ARGS` | `""`        | Additional custom arguments for HLTV |
+| `ENABLE_HTTP_SERVER` | `1`         | Enable HTTP server for fast downloads (0=disabled, 1=enabled) |
+| `HTTP_SERVER_PORT` | `8080`      | HTTP server port |
+| `PROCESS_TEMPLATES` | `1`         | Process .tmpl files with gomplate on startup (0=disabled, 1=enabled) |
+| `AMXMODX_AUTOCOMPILE` | `1`         | Auto-compile .sma plugins on startup (0=disabled, 1=enabled) |
 
 **Custom Server Arguments:**
 
@@ -98,11 +102,28 @@ This is useful for:
 - Passing additional console commands
 - Configuring advanced server settings
 
+**Custom HLTV Arguments:**
+
+You can pass additional arguments to HLTV using the `HLTV_ARGS` environment variable:
+
+```yaml
+environment:
+  - HLTV_ARGS="+name 'My HLTV' +rate 10000 +maxclients 10"
+```
+
+This is useful for:
+- Setting HLTV server name
+- Configuring bandwidth/rate settings
+- Setting maximum spectator slots
+- Adjusting delay and other HLTV-specific settings
+
 ### Ports
 
 The server exposes the following ports:
 - **27015/udp** - Game server (primary)
 - **27015/tcp** - Game server
+- **27020/udp** - HLTV (if enabled, configurable via HLTV_PORT)
+- **27020/tcp** - HLTV (if enabled, configurable via HLTV_PORT)
 - **8080/tcp** - HTTP server (if enabled, configurable via HTTP_SERVER_PORT)
 
 ### AMX Mod X Auto-Compile
@@ -232,6 +253,55 @@ sv_downloadurl "http://your-server-ip:8080"
 sv_allowdownload 1
 sv_allowupload 1
 ```
+
+### HLTV (Half-Life TV)
+
+HLTV is enabled by default and allows spectators to watch live matches without affecting server performance. HLTV acts as a proxy that connects to the game server and relays the game to spectators with a configurable delay.
+
+**Features:**
+- Live match spectating and broadcasting
+- Configurable delay to prevent cheating
+- No impact on server performance
+- Automatic reconnection to the game server
+- Supports multiple spectators
+- Automatically connects to the local game server (127.0.0.1)
+
+**How to connect as a spectator:**
+1. Launch Counter-Strike 1.6
+2. Open the console (`)
+3. Type: `connect <your-server-ip>:27020` (use your HLTV port)
+
+**Enable HLTV:**
+To enable HLTV, set the environment variable in your `docker-compose.yml`:
+```yaml
+environment:
+  - HLTV_ENABLE=1
+```
+
+**Change HLTV port:**
+```yaml
+environment:
+  - HLTV_PORT=27030
+```
+
+**Configure HLTV settings:**
+You can customize HLTV behavior using `HLTV_ARGS`:
+```yaml
+environment:
+  - HLTV_ARGS="+name 'Official HLTV' +rate 10000 +maxclients 10 +delay 30"
+```
+
+Common HLTV settings:
+- `+name "Server Name"` - HLTV server name shown to spectators
+- `+rate <value>` - Maximum bandwidth rate (default: 10000)
+- `+maxclients <number>` - Maximum number of spectators (default: depends on HLTV version)
+- `+delay <seconds>` - Spectator delay in seconds (helps prevent cheating)
+
+**Important Notes:**
+- HLTV automatically reconnects to the game server if disconnected
+- HLTV restarts automatically if it crashes
+- Spectators connect to the HLTV port, not the game server port
+- The HLTV server connects to 127.0.0.1 (localhost) to watch the game
 
 ## Data Persistence
 
@@ -392,7 +462,7 @@ Images are published to: `ghcr.io/bordeux/cstrike-server`
 
 ### Server won't start
 - Check logs: `docker-compose logs -f`
-- Ensure ports 27015 (UDP/TCP) are not in use
+- Ensure ports 27015 (UDP/TCP) and 27020 (UDP/TCP, if HLTV enabled) are not in use
 - Verify volume permissions on the `./cstrike` directory
 
 ### Can't connect to server
@@ -403,6 +473,13 @@ Images are published to: `ghcr.io/bordeux/cstrike-server`
 ### Configuration changes not applied
 - Restart the server: `docker-compose restart`
 - For major changes, rebuild: `docker-compose up -d --build`
+
+### Can't connect to HLTV
+- Ensure HLTV is enabled: `HLTV_ENABLE=1`
+- Check HLTV port is exposed in docker-compose.yml (default: 27020)
+- Verify port 27020/UDP and 27020/TCP are open in firewall
+- Check logs to confirm HLTV started: `docker-compose logs -f`
+- Ensure you're connecting to the HLTV port (27020), not the game server port (27015)
 
 ## License
 

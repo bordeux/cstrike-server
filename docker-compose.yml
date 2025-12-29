@@ -8,8 +8,11 @@ services:
     ports:
       - "27015:27015/udp"
       - "27015:27015/tcp"
+      - "27020:27020/udp"
+      - "27020:27020/tcp"
+      - "8080:8080/tcp"
     volumes:
-      - ./cstrike:/opt/steam/hlds/cstrike
+      - ./.docker/cstrike_workdir:/opt/steam/hlds/cstrike
     environment:
       - SERVER_PORT=27015
       - SERVER_MAP=de_dust2
@@ -17,6 +20,9 @@ services:
       - SERVER_MAX_PLAYERS=20
       - SERVER_GAME=cstrike
       - SERVER_PASSWORD=change-me
+      - HLTV_ENABLE=1
+      - HLTV_PORT=27020
+      - HLTV_ARGS=
       # - CPU_MHZ=2400
     stdin_open: true
     tty: true
