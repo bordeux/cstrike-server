@@ -5,7 +5,7 @@ LABEL org.opencontainers.image.source=https://github.com/bordeux/cstrike-server
 
 ENV SERVER_PORT=27015
 ENV HLTV_PORT=27020
-ENV HLTV_ENABLE=1
+ENV HLTV_ENABLE=0
 ENV HLTV_ARGS=""
 ENV SERVER_MAP=de_dust2
 ENV SERVER_LAN=0

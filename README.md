@@ -70,22 +70,22 @@ docker-compose -f docker-compose.build.yml up -d --build
 
 Configure the server by modifying the environment variables in `docker-compose.yml`:
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `SERVER_PORT` | `27015` | Server port |
-| `SERVER_MAP` | `de_dust2` | Starting map |
-| `SERVER_LAN` | `0` | LAN mode (0=internet, 1=LAN) |
-| `SERVER_MAX_PLAYERS` | `20` | Maximum number of players |
-| `SERVER_GAME` | `cstrike` | Game type |
+| Variable | Default     | Description |
+|----------|-------------|-------------|
+| `SERVER_PORT` | `27015`     | Server port |
+| `SERVER_MAP` | `de_dust2`  | Starting map |
+| `SERVER_LAN` | `0`         | LAN mode (0=internet, 1=LAN) |
+| `SERVER_MAX_PLAYERS` | `20`        | Maximum number of players |
+| `SERVER_GAME` | `cstrike`   | Game type |
 | `SERVER_PASSWORD` | `change-me` | Server password (change this!) |
-| `HLDS_ARGS` | `""` | Additional custom arguments for hlds_run |
-| `HLTV_ENABLE` | `1` | Enable HLTV for spectating and broadcasting (0=disabled, 1=enabled) |
-| `HLTV_PORT` | `27020` | HLTV port |
-| `HLTV_ARGS` | `""` | Additional custom arguments for HLTV |
-| `ENABLE_HTTP_SERVER` | `1` | Enable HTTP server for fast downloads (0=disabled, 1=enabled) |
-| `HTTP_SERVER_PORT` | `8080` | HTTP server port |
-| `PROCESS_TEMPLATES` | `1` | Process .tmpl files with gomplate on startup (0=disabled, 1=enabled) |
-| `AMXMODX_AUTOCOMPILE` | `1` | Auto-compile .sma plugins on startup (0=disabled, 1=enabled) |
+| `HLDS_ARGS` | `""`        | Additional custom arguments for hlds_run |
+| `HLTV_ENABLE` | `0`         | Enable HLTV for spectating and broadcasting (0=disabled, 1=enabled) |
+| `HLTV_PORT` | `27020`     | HLTV port |
+| `HLTV_ARGS` | `""`        | Additional custom arguments for HLTV |
+| `ENABLE_HTTP_SERVER` | `1`         | Enable HTTP server for fast downloads (0=disabled, 1=enabled) |
+| `HTTP_SERVER_PORT` | `8080`      | HTTP server port |
+| `PROCESS_TEMPLATES` | `1`         | Process .tmpl files with gomplate on startup (0=disabled, 1=enabled) |
+| `AMXMODX_AUTOCOMPILE` | `1`         | Auto-compile .sma plugins on startup (0=disabled, 1=enabled) |
 
 **Custom Server Arguments:**
 
@@ -271,11 +271,11 @@ HLTV is enabled by default and allows spectators to watch live matches without a
 2. Open the console (`)
 3. Type: `connect <your-server-ip>:27020` (use your HLTV port)
 
-**Disable HLTV:**
-To disable HLTV, set the environment variable in your `docker-compose.yml`:
+**Enable HLTV:**
+To enable HLTV, set the environment variable in your `docker-compose.yml`:
 ```yaml
 environment:
-  - HLTV_ENABLE=0
+  - HLTV_ENABLE=1
 ```
 
 **Change HLTV port:**
