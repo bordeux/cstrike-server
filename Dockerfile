@@ -4,6 +4,9 @@ LABEL org.opencontainers.image.description="Counter Strike 1.6 server with amxmo
 LABEL org.opencontainers.image.source=https://github.com/bordeux/cstrike-server
 
 ENV SERVER_PORT=27015
+ENV HLTV_PORT=27020
+ENV HLTV_ENABLE=1
+ENV HLTV_ARGS=""
 ENV SERVER_MAP=de_dust2
 ENV SERVER_LAN=0
 ENV SERVER_MAX_PLAYERS=20
@@ -75,7 +78,8 @@ RUN echo "" >> ${CSTRIKE_PATH}/server.cfg && \
     echo "exec custom.cfg" >> ${CSTRIKE_PATH}/server.cfg && \
     echo "exec env_cvar.cfg" >> ${CSTRIKE_PATH}/server.cfg && \
     touch ${CSTRIKE_PATH}/custom.cfg && \
-    chmod +x ${CSTRIKE_PATH}/addons/amxmodx/scripting/amxxpc
+    chmod +x ${CSTRIKE_PATH}/addons/amxmodx/scripting/amxxpc && \
+    chmod +x ${HLDS_PATH}/hltv
 
 RUN mv ${CSTRIKE_PATH} ${CSTRIKE_BASE_PATH}
 
