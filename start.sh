@@ -83,9 +83,12 @@ while [ $SHUTDOWN -eq 0 ]; do
     # Restart HLTV if needed and enabled
     if [ "$HLTV_ENABLE" = "1" ] && ! kill -0 $HLTV_PID 2>/dev/null; then
         echo "HLTV not running, restarting..."
-        /opt/steam/hlds/hltv \
+        LD_LIBRARY_PATH=${HLDS_PATH} /opt/steam/hlds/hltv \
+            -nodns \
+            -maxfps 101 \
             +port "${HLTV_PORT}" \
             +connect "127.0.0.1:${SERVER_PORT}" \
+            +exec cstrike/hltv.cfg
             ${HLTV_ARGS} &
         HLTV_PID=$!
         echo "HLTV restarted with PID ${HLTV_PID}"
