@@ -80,6 +80,7 @@ RUN echo "" >> ${CSTRIKE_PATH}/server.cfg && \
     touch ${CSTRIKE_PATH}/custom.cfg && \
     chmod +x ${CSTRIKE_PATH}/addons/amxmodx/scripting/amxxpc && \
     chmod +x ${HLDS_PATH}/hltv
+    chmod 755 ${HLDS_PATH}/*.so
 
 RUN mv ${CSTRIKE_PATH} ${CSTRIKE_BASE_PATH}
 
