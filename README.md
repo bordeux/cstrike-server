@@ -6,6 +6,7 @@ A containerized Counter-Strike 1.6 dedicated server based on HLDS (Half-Life Ded
 
 - Based on Ubuntu 24.04
 - Includes AMX Mod X and [amx-base-pack](https://github.com/bordeux/amxx-base-pack)
+- Template processing with gomplate for dynamic configuration
 - Auto-compile AMX Mod X plugins on startup (enabled by default)
 - Dynamic CVAR configuration via environment variables
 - HTTP server for fast content downloads (enabled by default)
@@ -79,6 +80,7 @@ Configure the server by modifying the environment variables in `docker-compose.y
 | `HLDS_ARGS` | `""` | Additional custom arguments for hlds_run |
 | `ENABLE_HTTP_SERVER` | `1` | Enable HTTP server for fast downloads (0=disabled, 1=enabled) |
 | `HTTP_SERVER_PORT` | `8080` | HTTP server port |
+| `PROCESS_TEMPLATES` | `1` | Process .tmpl files with gomplate on startup (0=disabled, 1=enabled) |
 | `AMXMODX_AUTOCOMPILE` | `1` | Auto-compile .sma plugins on startup (0=disabled, 1=enabled) |
 
 **Custom Server Arguments:**
@@ -122,6 +124,49 @@ environment:
 1. Place your `.sma` files in `cstrike/addons/amxmodx/scripting/`
 2. Restart the container
 3. Compiled `.amxx` files will be in `cstrike/addons/amxmodx/plugins/`
+
+### Template Processing with Gomplate
+
+The server automatically processes template files (`.tmpl`) using [gomplate](https://docs.gomplate.ca/) on startup. This allows you to create dynamic configuration files using environment variables and gomplate's built-in functions.
+
+**How it works:**
+1. Create a file with `.tmpl` extension (e.g., `config.cfg.tmpl`)
+2. Use gomplate syntax to reference environment variables
+3. On container start, the template is processed and output to `config.cfg`
+
+**Example - `custom.cfg.tmpl`:**
+```
+// Custom server configuration
+hostname "{{ getenv "SERVER_HOSTNAME" "My CS Server" }}"
+sv_contact "{{ getenv "SERVER_CONTACT" "admin@example.com" }}"
+rcon_password "{{ getenv "SERVER_PASSWORD" }}"
+
+{{ if eq (getenv "SERVER_MODE") "competitive" }}
+mp_startmoney 800
+mp_roundtime 1.92
+mp_freezetime 15
+{{ else }}
+mp_startmoney 16000
+mp_roundtime 5
+mp_freezetime 6
+{{ end }}
+```
+
+**Usage:**
+```yaml
+environment:
+  - SERVER_HOSTNAME=My Awesome Server
+  - SERVER_CONTACT=admin@myserver.com
+  - SERVER_MODE=competitive
+```
+
+Place template files in your mounted `cstrike` directory and they'll be processed automatically on startup.
+
+**Disable template processing:**
+```yaml
+environment:
+  - PROCESS_TEMPLATES=0
+```
 
 ### Dynamic CVAR Configuration
 
@@ -265,11 +310,13 @@ docker-compose -f docker-compose.build.yml up -d --build
 ├── entrypoint.sh          # Main entrypoint script
 ├── entrypoint.sh.d/       # Modular entrypoint scripts
 │   ├── 10-copy-base.sh    # Copy base files on first run
+│   ├── 15-process-templates.sh # Process .tmpl files with gomplate
 │   ├── 20-copy-overwrites.sh # Copy overwrite files
 │   ├── 30-generate-cvars.sh  # Generate env_cvar.cfg
 │   └── 40-compile-plugins.sh # Auto-compile AMXMODX plugins
 ├── helpers/               # Helper utility scripts
-│   └── amxmodx-compile.sh # Compile AMXMODX plugins
+│   ├── amxmodx-compile.sh # Compile AMXMODX plugins
+│   └── process-templates.sh # Process gomplate templates
 ├── start.sh               # Server startup script
 ├── nginx.conf             # HTTP server configuration
 ├── hlds.txt               # SteamCMD installation script
@@ -303,6 +350,21 @@ docker exec cstrike-server ${HELPERS_PATH}/amxmodx-compile.sh /opt/steam/hlds/cs
 
 # Or with full path
 docker exec cstrike-server /usr/bin/helpers/amxmodx-compile.sh /opt/steam/hlds/cstrike/addons/amxmodx
+```
+
+**`process-templates.sh`**
+Process template files (`.tmpl`) using gomplate.
+
+Usage:
+```bash
+# Inside container
+${HELPERS_PATH}/process-templates.sh /opt/steam/hlds/cstrike
+
+# From host (via docker exec)
+docker exec cstrike-server ${HELPERS_PATH}/process-templates.sh /opt/steam/hlds/cstrike
+
+# Process templates in a specific directory
+docker exec cstrike-server ${HELPERS_PATH}/process-templates.sh /opt/steam/hlds/cstrike/cfg
 ```
 
 You can create additional helper scripts by:

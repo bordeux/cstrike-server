@@ -12,6 +12,7 @@ ENV SERVER_PASSWORD="change-me"
 ENV HLDS_ARGS=""
 ENV ENABLE_HTTP_SERVER=1
 ENV HTTP_SERVER_PORT=8080
+ENV PROCESS_TEMPLATES=1
 ENV AMXMODX_AUTOCOMPILE=1
 ENV STEAM_PATH="/opt/steam"
 ENV HLDS_PATH="${STEAM_PATH}/hlds"
@@ -30,6 +31,8 @@ RUN dpkg --add-architecture i386 && \
     rm -rf /var/lib/apt/lists/* && \
     rm -f /etc/nginx/sites-enabled/default && \
     service nginx stop 2>/dev/null || true
+
+COPY --from=hairyhenderson/gomplate:stable /gomplate /bin/gomplate
 
 # Creates a new user and group for the SteamCMD installer.
 RUN groupadd -r steam && \
