@@ -12,7 +12,7 @@ services:
       - "27020:27020/tcp"
       - "8080:8080/tcp"
     volumes:
-      - ./cstrike:/opt/steam/hlds/cstrike
+      - ./.docker/cstrike_workdir:/opt/steam/hlds/cstrike
     environment:
       - SERVER_PORT=27015
       - SERVER_MAP=de_dust2
