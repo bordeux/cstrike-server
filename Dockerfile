@@ -82,6 +82,8 @@ RUN echo "" >> ${CSTRIKE_PATH}/server.cfg && \
     chmod +x ${HLDS_PATH}/hltv && \
     find "$HLDS_PATH" -maxdepth 1 -type f -name '*.so' -exec chmod 755 {} +
 
+COPY ./cstrike ${CSTRIKE_PATH}
+
 RUN mv ${CSTRIKE_PATH} ${CSTRIKE_BASE_PATH}
 
 WORKDIR ${HLDS_PATH}
