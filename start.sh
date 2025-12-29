@@ -13,6 +13,9 @@ HLTV_PORT=${HLTV_PORT:-27020}
 HLTV_ARGS=${HLTV_ARGS:-}
 HLDS_ARGS=${HLDS_ARGS:-}
 
+export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${HLDS_PATH}"
+
+
 # Trap signals for graceful shutdown
 trap 'echo "Received shutdown signal..."; SHUTDOWN=1; killall hlds_linux hltv nginx 2>/dev/null || true; [ $NGINX_PID -ne 0 ] && kill $NGINX_PID 2>/dev/null || true; [ $HLTV_PID -ne 0 ] && kill $HLTV_PID 2>/dev/null || true' SIGTERM SIGINT
 
@@ -83,7 +86,7 @@ while [ $SHUTDOWN -eq 0 ]; do
     # Restart HLTV if needed and enabled
     if [ "$HLTV_ENABLE" = "1" ] && ! kill -0 $HLTV_PID 2>/dev/null; then
         echo "HLTV not running, restarting..."
-        LD_LIBRARY_PATH=${HLDS_PATH} /opt/steam/hlds/hltv \
+        /opt/steam/hlds/hltv \
             -nodns \
             -maxfps 101 \
             +port "${HLTV_PORT}" \
