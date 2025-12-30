@@ -48,6 +48,12 @@ for sma_file in *.sma; do
         if [ $COMPILE_EXIT_CODE -eq 0 ]; then
             echo "✓"
             ((COMPILE_COUNT++))
+
+            if [ $DEBUG -eq 1 ]; then
+              echo "--- Compilation output ---"
+              echo "$COMPILE_OUTPUT"
+              echo "-------------------------"
+            fi
         else
             echo "✗ FAILED"
             echo "--- Compilation output ---"
