@@ -31,6 +31,9 @@ fi
 echo "🔨 Auto-compiling AMXMODX plugins from: $SCRIPTING_DIR"
 cd "$SCRIPTING_DIR" || exit 1
 
+# Initialize DEBUG if not set
+DEBUG="${DEBUG:-0}"
+
 COMPILE_COUNT=0
 FAILED_COUNT=0
 
@@ -55,7 +58,7 @@ for sma_file in *.sma; do
             ((FAILED_COUNT++))
         fi
 
-        if [ $SHOW_OUTPUT -eq 1 ]; then
+        if [ "$SHOW_OUTPUT" -eq 1 ]; then
           echo "📄 --- Compilation output ---"
           echo "$COMPILE_OUTPUT"
           echo "-------------------------"
