@@ -1,5 +1,5 @@
 #!/bin/bash
-# Process template files using gomplate
+# Process template files using tmpltool
 
 if [ "${PROCESS_TEMPLATES:-1}" = "1" ]; then
     # Use the helper script to process templates

@@ -35,7 +35,7 @@ RUN dpkg --add-architecture i386 && \
     rm -f /etc/nginx/sites-enabled/default && \
     service nginx stop 2>/dev/null || true
 
-COPY --from=hairyhenderson/gomplate:stable /gomplate /bin/gomplate
+COPY --from=ghcr.io/bordeux/tmpltool:latest /tmpltool /bin/tmpltool
 
 # Creates a new user and group for the SteamCMD installer.
 RUN groupadd -r steam && \

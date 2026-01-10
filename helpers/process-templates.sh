@@ -1,5 +1,5 @@
 #!/bin/bash
-# Helper script to process template files using gomplate
+# Helper script to process template files using tmpltool
 # Usage: process-templates.sh <directory_path>
 
 if [ $# -eq 0 ]; then
@@ -20,25 +20,25 @@ echo "Processing template files in: $TEMPLATE_DIR"
 
 PROCESSED_COUNT=0
 
-# Find all .tmpl files recursively
+# Find all .tmpltool files recursively
 while IFS= read -r -d '' tmpl_file; do
-    # Get the output filename (remove .tmpl extension)
-    output_file="${tmpl_file%.tmpl}"
+    # Get the output filename (remove .tmpltool extension)
+    output_file="${tmpl_file%.tmpltool}"
 
     # Get relative path for cleaner output
     relative_path="${tmpl_file#$TEMPLATE_DIR/}"
 
     echo -n "Processing: $relative_path -> $(basename "$output_file") ... "
 
-    # Process template with gomplate
-    if gomplate -f "$tmpl_file" -o "$output_file"; then
+    # Process template with tmpltool
+    if tmpltool "$tmpl_file" -o "$output_file"; then
         echo "✓"
         ((PROCESSED_COUNT++))
     else
         echo "✗ FAILED"
         echo "ERROR: Failed to process template: $tmpl_file"
     fi
-done < <(find "$TEMPLATE_DIR" -type f -name "*.tmpl" -print0)
+done < <(find "$TEMPLATE_DIR" -type f -name "*.tmpltool" -print0)
 
 if [ $PROCESSED_COUNT -eq 0 ]; then
     echo "No template files found."
