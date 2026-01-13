@@ -39,6 +39,7 @@ jobs:
         id: semantic
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HUSKY: 0
         run: |
           npx semantic-release --dry-run=false 2>&1 | tee release-output.txt
           if grep -q "Published release" release-output.txt; then
