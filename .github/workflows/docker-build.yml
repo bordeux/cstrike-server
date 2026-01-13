@@ -1,11 +1,10 @@
-name: Build and Push Docker Image
+name: Build and Push Docker Image (Feature Branches)
 
 on:
   push:
     branches:
       - '**'
-  schedule:
-    - cron: '0 0 * * 0'  # Weekly on Sunday at 00:00 UTC
+      - '!main'
 
 env:
   REGISTRY: ghcr.io
@@ -38,8 +37,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' || github.event_name == 'schedule' }}
-            type=ref,event=branch,enable=${{ github.ref != 'refs/heads/main' && github.event_name != 'schedule' }},suffix=,value={{branch}}
+            type=ref,event=branch
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5

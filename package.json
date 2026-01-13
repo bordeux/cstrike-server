@@ -1,0 +1,22 @@
+{
+  "name": "cstrike-server",
+  "version": "0.0.0-semantically-released",
+  "private": true,
+  "description": "Counter-Strike 1.6 HLDS server Docker image",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bordeux/cstrike-server.git"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.0.0",
+    "@commitlint/config-conventional": "^19.0.0",
+    "@semantic-release/changelog": "^6.0.0",
+    "@semantic-release/exec": "^6.0.0",
+    "@semantic-release/git": "^10.0.0",
+    "husky": "^9.0.0",
+    "semantic-release": "^24.0.0"
+  },
+  "scripts": {
+    "prepare": "husky"
+  }
+}
