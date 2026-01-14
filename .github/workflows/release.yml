@@ -93,24 +93,24 @@ jobs:
           docker cp extract:/opt/steam/hlds ./hlds
           docker rm extract
 
-      - name: Create hlds.tar.gz
-        run: tar -czvf hlds.tar.gz -C ./hlds .
+      - name: Create hlds.tar
+        run: tar -cvf hlds.tar -C ./hlds .
 
-      - name: Upload hlds.tar.gz to release
+      - name: Upload hlds.tar to release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release upload v${{ needs.release.outputs.new_release_version }} hlds.tar.gz --clobber
+          gh release upload v${{ needs.release.outputs.new_release_version }} hlds.tar --clobber
 
-      - name: Create split zip files for gh-pages
+      - name: Create split tar files for gh-pages
         run: |
           VERSION="v${{ needs.release.outputs.new_release_version }}"
           mkdir -p gh-pages-dist
-          cd ./hlds
-          zip -r -s 20m ../gh-pages-dist/hlds-${VERSION}.zip .
-          cd ../gh-pages-dist
+          # Split hlds.tar into 20MB chunks with numeric suffix
+          split -b 20M -d --additional-suffix=.tar hlds.tar gh-pages-dist/hlds-${VERSION}.part
+          cd gh-pages-dist
           # Create manifest.json with version and file list
-          FILES=$(ls -1 hlds-${VERSION}.z* | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          FILES=$(ls -1 hlds-${VERSION}.part*.tar | jq -R -s -c 'split("\n") | map(select(length > 0))')
           jq -n \
             --arg version "$VERSION" \
             --argjson files "$FILES" \
