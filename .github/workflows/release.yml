@@ -87,15 +87,42 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Extract hlds.tar.gz from container
+      - name: Extract hlds from container
         run: |
           docker create --name extract ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:v${{ needs.release.outputs.new_release_version }}
           docker cp extract:/opt/steam/hlds ./hlds
-          tar -czvf hlds.tar.gz -C ./hlds .
           docker rm extract
+
+      - name: Create hlds.tar.gz
+        run: tar -czvf hlds.tar.gz -C ./hlds .
 
       - name: Upload hlds.tar.gz to release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release upload v${{ needs.release.outputs.new_release_version }} hlds.tar.gz --clobber
+
+      - name: Create split zip files for gh-pages
+        run: |
+          mkdir -p gh-pages-dist
+          cd ./hlds
+          zip -r -s 50m ../gh-pages-dist/hlds.zip .
+          cd ../gh-pages-dist
+          # Create manifest.json with version and file list
+          FILES=$(ls -1 hlds.z* | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          jq -n \
+            --arg version "v${{ needs.release.outputs.new_release_version }}" \
+            --argjson files "$FILES" \
+            '{version: $version, files: $files}' > manifest.json
+
+      - name: Deploy to gh-pages (squashed)
+        run: |
+          cd gh-pages-dist
+          git init
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b gh-pages
+          git add -A
+          git commit -m "Release v${{ needs.release.outputs.new_release_version }}"
+          git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          git push -f origin gh-pages
