@@ -104,14 +104,15 @@ jobs:
 
       - name: Create split zip files for gh-pages
         run: |
+          VERSION="v${{ needs.release.outputs.new_release_version }}"
           mkdir -p gh-pages-dist
           cd ./hlds
-          zip -r -s 50m ../gh-pages-dist/hlds.zip .
+          zip -r -s 20m ../gh-pages-dist/hlds-${VERSION}.zip .
           cd ../gh-pages-dist
           # Create manifest.json with version and file list
-          FILES=$(ls -1 hlds.z* | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          FILES=$(ls -1 hlds-${VERSION}.z* | jq -R -s -c 'split("\n") | map(select(length > 0))')
           jq -n \
-            --arg version "v${{ needs.release.outputs.new_release_version }}" \
+            --arg version "$VERSION" \
             --argjson files "$FILES" \
             '{version: $version, files: $files}' > manifest.json
 
