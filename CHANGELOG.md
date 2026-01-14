@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/bordeux/cstrike-server/compare/v1.0.0...v1.1.0) (2026-01-14)
+
+
+### Features
+
+* add split zip deployment to gh-pages with manifest.json ([d729a53](https://github.com/bordeux/cstrike-server/commit/d729a5344c08420eb6a2e5ab05f4e99695a30071)), closes [#pages](https://github.com/bordeux/cstrike-server/issues/pages)
+
 # 1.0.0 (2026-01-13)
 
 
