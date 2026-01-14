@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/bordeux/cstrike-server/compare/v1.1.0...v1.1.1) (2026-01-14)
+
+
+### Bug Fixes
+
+* trigger release process ([76b43e2](https://github.com/bordeux/cstrike-server/commit/76b43e2a4d1aa6695f28f71d1f8b31729fcb8631))
+
 # [1.1.0](https://github.com/bordeux/cstrike-server/compare/v1.0.0...v1.1.0) (2026-01-14)
 
 
